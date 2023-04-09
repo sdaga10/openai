@@ -1,0 +1,35 @@
+
+
+# Declare variables
+
+variable "resource_group_name" {
+  default = "rg-cosmosdb"
+}
+
+variable "location" {
+  default = "westus2"
+}
+
+# Check if resource group exists
+
+data "azurerm_resource_group" "rg" {
+  name = var.resource_group_name
+}
+
+# Provision CosmosDB
+
+resource "azurerm_cosmosdb_account" "cosmos_db" {
+  name                = var.resource_group_name
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  offer_type          = "Standard"
+  kind                = "GlobalDocumentDB"
+
+  consistency_policy {
+    consistency_level = "Eventual"
+  }
+
+  ip_range_filter {
+    ip_mask = ""
+  }
+}
