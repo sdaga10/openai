@@ -1,0 +1,56 @@
+
+
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = "~> 2.0"
+    }
+  }
+}
+
+variable "logic_app_name" {
+  description = "Name of the Logic App"
+}
+
+variable "resource_group_name" {
+  description = "Name of the Resource Group to create the Logic App in"
+}
+
+variable "location" {
+  description = "Azure Region where the Logic App should be created"
+}
+
+data "azurerm_resource_group" "rg" {
+  name    = var.resource_group_name
+  location = var.location
+}
+
+resource "azurerm_logic_app_workflow" "logic_app" {
+  name                = var.logic_app_name
+  location            = data.azurerm_resource_group.rg.location
+  resource_group_name = data.azurerm_resource_group.rg.name
+ 
+  definition = <<DEFINITION
+    {
+      "$connections": {
+        "value": {
+          "dynamic_input": {
+            "connection": {
+              "host": {
+                "type": "string"
+              },
+              "authentication": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  DEFINITION
+ 
+  parameters = {
+    dynamic_input_value = "this is a dynamic input value"
+  }
+}
