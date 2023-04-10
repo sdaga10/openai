@@ -1,0 +1,30 @@
+
+
+//Define Variables
+variable "app_name" {
+  type = string
+  description = "Name of the appservice."
+}
+
+variable "app_location" {
+  type = string
+  description = "Location of the appservice."
+}
+
+variable "app_plan" {
+  type = string
+  description = "The app service plan to use for the appservice."
+}
+
+//Data Source
+data "azurerm_resource_group" "existing" {
+  name = var.app_name
+}
+
+//Provision AppService
+resource "azurerm_app_service" "appservice" {
+  name                = var.app_name
+  location            = var.app_location
+  resource_group_name = data.azurerm_resource_group.existing.name
+  app_service_plan_id = var.app_plan
+}
