@@ -1,0 +1,17 @@
+
+
+# Define a variable for the resource group name
+variable "rg_name" {
+  type = string
+}
+
+# Check if the resource group already exists
+data "azurerm_resource_group" "rg" {
+  name = var.rg_name
+}
+
+# Provision the resource group
+resource "azurerm_resource_group" "rg" {
+  name     = var.rg_name
+  location = data.azurerm_resource_group.rg.location
+}
