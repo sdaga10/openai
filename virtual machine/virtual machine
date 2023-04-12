@@ -1,0 +1,62 @@
+
+
+variable "project_id" {
+  type = string
+  default = "myproject"
+}
+
+variable "region" {
+  type = string
+  default = "europe-west1"
+}
+
+variable "machine_type" {
+  type = string
+  default = "f1-micro"
+}
+
+variable "disk_size" {
+  type = number
+  default = 10
+}
+
+variable "disk_type" {
+  type = string
+  default = "pd-standard"
+}
+
+variable "image" {
+  type = string
+  default = "ubuntu-1804-bionic-v20190814"
+}
+
+variable "network_name" {
+  type = string
+  default = "mynetwork"
+}
+
+variable "ssh_key" {
+  type = string
+  default = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC+0o7tKjJZb9pPzE0tYM7VuQjhLH7VuPkPcgc7rjKmJhXVp/uUzmYl+JHhjxKV7fT/g+cV7nf/W9TvT2+N/YbYG/hfWq3vStN/tDnT/pfzAs+qXZ3h6d3jKPJ+0yfI6yvQ2aAJGKjQI1HvaXCZoxgjKziy4LVb6A5F6P5K6U5SdU5JXVhDk+z/1Vrn+lUzjKV7H1QQrE/7fP0+9TvT8jJWYf+66J1d13tu3vq8JjwE+t7sMtO9X3mfz11/p/AaJzKjxmv+R/yfEgNe/jKQ2Xb30Z/A+2KjY4g/fEz/Uy8I/Cch6BKm5U/X0HU1GQ2gK4Yi4D0yIoU6lC/6S5j5L5U3fq3 john"
+}
+
+resource "google_compute_instance" "default" {
+  name         = "myinstance"
+  machine_type = var.machine_type
+  zone         = var.region
+
+  boot_disk {
+    initialize_params {
+      image = var.image
+    }
+  }
+  network_interface {
+    network = var.network_name
+  }
+  disk {
+    image = var.image
+    type  = var.disk_type
+    size  = var.disk_size
+  }
+  metadata_startup_script = "echo ${var.ssh_key} >> /home/user/.ssh/authorized_keys"
+}
