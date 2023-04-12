@@ -1,0 +1,64 @@
+
+
+# Define Variables
+variable "name" {
+  type = string
+  default = "myvm"
+}
+
+variable "location" {
+  type = string
+  default = "westus"
+}
+
+variable "resource_group_name" {
+  type = string
+  default = "myresourcegroup"
+}
+
+# Provision the Azure VM
+resource "azurerm_virtual_machine" "vm" {
+  name                  = var.name
+  location              = var.location
+  resource_group_name   = var.resource_group_name
+  vm_size               = "Standard_F2s_v2"
+
+  storage_image_reference {
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
+    version   = "latest"
+  }
+
+  storage_os_disk {
+    name              = "myosdisk1"
+    caching           = "ReadWrite"
+    create_option     = "FromImage"
+    managed_disk_type = "Standard_LRS"
+  }
+
+  os_profile {
+    computer_name  = var.name
+    admin_username = "azureuser"
+    admin_password = "SecurePassword123!"
+  }
+
+  os_profile_linux_config {
+    disable_password_authentication = false
+  }
+
+  network_interface_ids = [azurerm_network_interface.mynic.id]
+}
+
+# Create the Network Interface
+resource "azurerm_network_interface" "mynic" {
+  name                = "mynic"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+
+  ip_configuration {
+    name                          = "myipconfig"
+    subnet_id                     = var.subnet_id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
