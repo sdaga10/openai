@@ -1,0 +1,33 @@
+
+
+#provider configuration
+provider "azurerm" {
+  version = "~> 2.6"
+  subscription_id = "00000000-0000-0000-0000-000000000000"
+  tenant_id       = "00000000-0000-0000-0000-000000000000"
+  client_id       = "00000000-0000-0000-0000-000000000000"
+  client_secret   = "00000000-0000-0000-0000-000000000000"
+}
+
+#define variables
+variable "datafactory_name" {
+  type = string
+  default = "MyDataFactory"
+}
+
+variable "resource_group_name" {
+  type = string
+  default = "MyResourceGroup"
+}
+
+variable "location" {
+  type = string
+  default = "westus"
+}
+
+#resource configuration
+resource "azurerm_data_factory" "datafactory" {
+  name                = "${var.datafactory_name}"
+  resource_group_name = "${var.resource_group_name}"
+  location            = "${var.location}"
+}
